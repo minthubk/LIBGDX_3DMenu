@@ -5,12 +5,14 @@ import android.os.Bundle;
 
 public class AndroidMain3D extends AndroidApplication {
     ActionResolved actionResolver;
+    Application3D app;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        actionResolver = new ActionResolved(this);
+        app = (Application3D)getApplication();
+        actionResolver = new ActionResolved(this, app);
         
         // starts libGDX render thread
-        initialize(new AndroidGdxMenuActivity(actionResolver), false);
+        initialize(new AndroidGdxMenuActivity(actionResolver, app), false);
     }
 }

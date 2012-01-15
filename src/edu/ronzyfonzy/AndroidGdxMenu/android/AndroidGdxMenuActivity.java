@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 
 public class AndroidGdxMenuActivity implements ApplicationListener {
+	Application3D app;
 	private Mesh[] faces;
 	private PerspectiveCamera camera;
     ActionResolver actionResolver;
@@ -23,10 +24,11 @@ public class AndroidGdxMenuActivity implements ApplicationListener {
 	public AndroidGdxMenuActivity(){
 		
 	}
-	public AndroidGdxMenuActivity(ActionResolver actionResolver)
+	public AndroidGdxMenuActivity(ActionResolver actionResolver, Application3D app)
     {
         this.actionResolver = actionResolver;
-}
+        this.app = app;
+    }
 	
 	@Override
 	public void create() {
@@ -67,43 +69,39 @@ public class AndroidGdxMenuActivity implements ApplicationListener {
 		}
 
 		Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
-//		Gdx.gl10.glTranslatef(0.0f,0.0f,-3.0f);
 	}
 
 	@Override
 	public void resume() { }
 
-	protected int lastTouchX;
-	protected int lastTouchY;
+	protected int lastTouchX, firstTouchX;
 	float asd= -1.5f;
 	Date a, b;
+	int s=0;
 	boolean tuched = false;
 	@Override
 	public void render() {
 		if (Gdx.input.justTouched()) {
 			a = new Date();
 			tuched = true;
-			lastTouchX = Gdx.input.getX();
-//			lastTouchY = Gdx.input.getY();
-//			Log.i("CameraPos", "x: "+  Gdx.input.getX() /* + " | y: "+camera.position.y + " | z: "+camera.position.z*/);
+			firstTouchX =lastTouchX = Gdx.input.getX();
 		} else if (Gdx.input.isTouched()) {
 			camera.rotate(0.2f * (lastTouchX - Gdx.input.getX()), 0, 1.0f, 0);
-//			camera.rotate(0.2f * (lastTouchY - Gdx.input.getY()), 1.0f, 0, 0);
-//			System.out.println(camera.direction.toString());
 			lastTouchX = Gdx.input.getX();
-			lastTouchY = Gdx.input.getY();
 		}
 		if(!Gdx.input.isTouched()){
 			if(tuched){
+				app.position += lastTouchX - firstTouchX;
+				System.out.println("%: " + (app.position%1800) + " | /: " + (app.position / 1800));
 				b = new Date();
 				long time = b.getTime()-a.getTime();
-				if(time < 60){
-                    actionResolver.showMyList();
+				if(time < 80){
+					app.showActivity = CalculateActivity();
+					actionResolver.showMyList();
 				}
 				tuched = false;
 			}
 		}
-		
 		
 		camera.update();
 		camera.apply(Gdx.gl10);
@@ -133,4 +131,19 @@ public class AndroidGdxMenuActivity implements ApplicationListener {
 
 	@Override
 	public void dispose() { }
+	
+	private int CalculateActivity(){
+		float st = app.position%1800;
+		if(st < -15)
+			st+=1800;
+		if(st > -15 && st < 15)
+			return 1;
+		if(st > 434 && st < 468)
+			return 2;
+		if(st > 892 && st < 923)
+			return 3;
+		if(st > 1341 && st < 1372)
+			return 4;
+		return 0;
+	}
 }

@@ -10,13 +10,15 @@ import android.widget.Toast;
 
 
 public class ActionResolved implements ActionResolver {
+	Application3D app;
 	Handler uiThread;
 	Context appContext;
 
 
-	public ActionResolved(Context appContext) {
+	public ActionResolved(Context appContext, Application3D app) {
 		uiThread = new Handler();
 		this.appContext = appContext;
+		this.app = app;
 	}
 
 
@@ -65,14 +67,30 @@ public class ActionResolved implements ActionResolver {
 	}
 
 
-	public void showMyList() {
-		appContext.startActivity(new Intent(this.appContext, ActivityFirst.class));
-	}
-
-
 	@Override
 	public void showToast(CharSequence toastMessage, int toastDuration) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showMyList() {
+		switch(app.showActivity){
+			case 1:
+				appContext.startActivity(new Intent(this.appContext, ActivityFirst.class));
+				break;
+			case 2:
+				appContext.startActivity(new Intent(this.appContext, ActivitySecond.class));
+				break;
+			case 3:
+				appContext.startActivity(new Intent(this.appContext, ActivityForth.class));
+				break;
+			case 4:
+				appContext.startActivity(new Intent(this.appContext, ActivityThird.class));
+				break;
+			case 0:
+				showLongToast("Postavite se na pravilno pozicijo!");
+		}
 		
 	}
 }
